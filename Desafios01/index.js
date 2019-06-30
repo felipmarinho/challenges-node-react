@@ -7,35 +7,30 @@ const projects = [];
 
 server.use((req, res, next) => {
   console.time("Request");
-  console.log(`Método: ${req.method}; URL: ${req.url}`);
+  
   next();
   console.timeEnd("Request");
+  console.log(`Método: ${req.method}; URL: ${req.url}`);
+  console.count('Request count');
 });
 
 function projectExists(req, res, next) {
   if (req.params.id) {
     const { id } = req.params;
-    let existProject = false;
-    projects.forEach(p => {
-      if (p.id == id) {
-        existProject = true;
-      }
-    });
-    if (!existProject) {
+    const project = projects.find(p => p.id === id);
+    req.project = project;
+    if (!project) {
       return res.status(400).json({ error: "ID Project not exist" });
     }
   }
-
   return next();
 }
 
 server.get("/projects/:id", projectExists, (req, res) => {
-  const { id } = req.params;
-  projects.forEach(p => {
-    if (p.id == id) {
-      return res.json(p);
-    }
-  });
+  const project = req.project;
+  if (project) {
+    return res.json(project);
+  }
   return res.json();
 });
 
@@ -53,36 +48,26 @@ server.post("/projects", (req, res) => {
 });
 
 server.post("/projects/:id/tasks", projectExists, (req, res) => {
-  const { id } = req.params;
   const { title } = req.body;
-  projects.forEach(p => {
-    if (p.id == id) {
-      p.tasks.push(title);
-      return res.json(p);
-    }
-  });
+  const p = req.project;
+
+  p.tasks.push(title);
+  return res.json(p);
 });
 
 server.put("/projects/:id", projectExists, (req, res) => {
-  const { id } = req.params;
   const { title } = req.body;
-  projects.forEach(p => {
-    if (p.id == id) {
-      p.title = title;
-      return res.json(p);
-    }
-  });
+  const p = req.project;
+  p.title = title;
+  
+  return res.json(p);
 });
 
 server.delete("/projects/:id", projectExists, (req, res) => {
-  const { id } = req.params;
-  projects.forEach(p => {
-    if (p.id == id) {
-      index = projects.indexOf(p);
-      projects.splice(index, 1);
-      return res.send();
-    }
-  });
+  const p = req.project;
+  index = projects.indexOf(p);
+  projects.splice(index, 1);
+  return res.send();
 });
 
 server.listen(3000);
