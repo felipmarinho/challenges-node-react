@@ -3,8 +3,8 @@ import './Header.css';
 
 function Header() {
     return (
-        <div class="topnav">
-            <a class="active" href="#home">Facebook</a>
+        <div className="topnav">
+            <a className="active" href="#home">Facebook</a>
         </div>
     );
 }
