@@ -1,0 +1,23 @@
+
+  .topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+header#main-heard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #4A90E2;
+  overflow: hidden;
+  height: 64px;
+}
+
+header#main-heard img {
+  margin-left: 42px;
+}
