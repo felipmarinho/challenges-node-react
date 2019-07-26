@@ -20,7 +20,7 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
-    page: 0,
+    page: 1,
   };
 
   async componentDidMount() {
@@ -95,10 +95,10 @@ export default class Repository extends Component {
         </IssueList>
 
         <Paginator>
-          <button type="button" disabled={page < 1} onClick={this.backPage}>
+          <button type="button" disabled={page < 2} onClick={this.backPage}>
             <FaAngleLeft color="#FFF" size={14} />
           </button>
-          <span>Página: {page + 1}</span>
+          <span>Página: {page}</span>
           <button type="button" onClick={this.nextPage}>
             <FaAngleRight color="#FFF" size={14} />
           </button>
