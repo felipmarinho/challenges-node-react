@@ -39,12 +39,19 @@ export default class Main extends Component {
   };
 
   handleSubmit = async e => {
+    e.preventDefault();
+    this.setState({ loading: true, error: false });
+
+    const { newRepo, repositories } = this.state;
     try {
-      e.preventDefault();
+      const duplicateRepository = repositories.find(
+        repo => repo.name === newRepo
+      );
+      if (duplicateRepository) {
+        const errorMessage = 'Respositório Duplicado';
+        throw errorMessage;
+      }
 
-      this.setState({ loading: true, error: false });
-
-      const { newRepo, repositories } = this.state;
       const response = await api.get(`/repos/${newRepo}`);
 
       const data = {
@@ -61,7 +68,7 @@ export default class Main extends Component {
       this.setState({
         error: true,
       });
-      console.log(error);
+      console.log(`Cause of error: ${JSON.stringify(error)}`);
     } finally {
       this.setState({
         loading: false,
