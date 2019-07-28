@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssueList, Paginator } from './styles';
+import { Loading, Owner, IssueList, Paginator, State } from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -21,6 +21,12 @@ export default class Repository extends Component {
     issues: [],
     loading: true,
     page: 1,
+    filterIndex: 0,
+    filters: [
+      { label: 'Todas', state: 'all', active: true },
+      { label: 'Abertas', state: 'open', active: false },
+      { label: 'Concluídas', state: 'closed', active: false },
+    ],
   };
 
   async componentDidMount() {
@@ -33,14 +39,16 @@ export default class Repository extends Component {
     });
     const { match } = this.props;
     const { page } = this.state;
+    const { filterIndex } = this.state;
+    const { filters } = this.state;
     const repoName = decodeURIComponent(match.params.repository);
     const [repository, issues] = await Promise.all([
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
-          state: 'open',
-          per_page: 5,
+          per_page: 30,
           page,
+          state: filters[filterIndex].state,
         },
       }),
     ]);
@@ -61,8 +69,28 @@ export default class Repository extends Component {
     await this.getRepositoryDetail();
   };
 
+  handleIssueFilter = async index => {
+    const { filters } = this.state;
+
+    filters.map((filter, i) => {
+      if (index === i) {
+        filter.active = true;
+      } else {
+        filter.active = false;
+      }
+    });
+
+    await this.setState({
+      page: 1,
+      filterIndex: index,
+      loading: true,
+    });
+
+    this.getRepositoryDetail();
+  };
+
   render() {
-    const { repository, issues, loading, page } = this.state;
+    const { repository, issues, loading, page, filters } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -76,6 +104,19 @@ export default class Repository extends Component {
           <h1>{repository.name}</h1>
           <p>{repository.description}</p>
         </Owner>
+
+        <State>
+          {filters.map((filter, index) => (
+            <button
+              type="button"
+              disabled={filter.active}
+              key={filter.state}
+              onClick={() => this.handleIssueFilter(index)}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </State>
 
         <IssueList>
           {issues.map(issue => (

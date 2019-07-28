@@ -125,3 +125,32 @@ export const Paginator = styled.div`
     }
   }
 `;
+
+export const State = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px;
+  padding: 3px 4px;
+  margin: 10px;
+
+  button {
+    background: #eee;
+    border: 0;
+    padding: 0 15px;
+    margin-left: 10px;
+    border-radius: 4px;
+    height: 35px;
+    color: #7159c1;
+    font-weight: bold;
+
+    &[disabled] {
+      background: #7159c1;
+      color: #eee;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+`;
